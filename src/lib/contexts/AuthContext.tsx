@@ -21,7 +21,7 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const auth: Auth | null = typeof window !== 'undefined' ? firebaseAuth : null;
+  const auth: Auth | null = typeof window !== 'undefined' ? (firebaseAuth as Auth) : null;
 
   useEffect(() => {
     // Only run on client side and when auth is initialized

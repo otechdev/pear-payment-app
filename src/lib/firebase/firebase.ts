@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, Auth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -28,7 +28,7 @@ if (typeof window !== 'undefined') {
 
 // Initialize Firebase only on client side
 let app;
-let auth;
+let auth: Auth | null = null;
 let db;
 let storage;
 
