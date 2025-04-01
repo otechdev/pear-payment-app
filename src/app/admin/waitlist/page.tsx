@@ -34,59 +34,43 @@ async function fetchWaitlist(): Promise<WaitlistEntry[]> {
 }
 
 export default function WaitlistPage() {
+  const { user, signOut } = useAuth();
   const router = useRouter();
   const [entries, setEntries] = useState<WaitlistEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isClient, setIsClient] = useState(false);
-  const { user, loading: authLoading, signOut } = useAuth();
 
-  // Ensure we're on client side before checking auth
   useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (isClient && !authLoading && !user) {
+    // If user is not authenticated, redirect to login
+    if (user === null) {
       router.push('/admin/login');
     }
-  }, [user, authLoading, router, isClient]);
+  }, [user, router]);
 
-  // Load waitlist data when authenticated
   useEffect(() => {
-    if (!isClient || authLoading || !user) return;
-    
     async function loadWaitlist() {
-      try {
-        setLoading(true);
-        const data = await fetchWaitlist();
-        setEntries(data);
-      } catch (err) {
-        setError('Failed to load waitlist data');
-        console.error(err);
-      } finally {
-        setLoading(false);
+      if (user) {
+        try {
+          setLoading(true);
+          const data = await fetchWaitlist();
+          setEntries(data);
+        } catch (err) {
+          setError('Failed to load waitlist data');
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
       }
     }
 
     loadWaitlist();
-  }, [isClient, authLoading, user]);
+  }, [user]);
 
-  // Show loading state
-  if (authLoading || loading || !isClient) {
+  // Show loading state while checking authentication
+  if (user === undefined || loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-lg">Loading waitlist data...</p>
-      </div>
-    );
-  }
-
-  // Check if user is authenticated
-  if (!user) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p className="text-lg">Redirecting to login...</p>
+        <p className="text-lg">Loading...</p>
       </div>
     );
   }
@@ -96,7 +80,7 @@ export default function WaitlistPage() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <PearLogo size={40} />
+            <PearLogo className="h-8 w-8" />
             <h1 className="text-2xl font-bold text-gray-900">Waitlist Management</h1>
           </div>
           <div className="flex items-center space-x-4">
