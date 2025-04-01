@@ -34,43 +34,42 @@ async function fetchWaitlist(): Promise<WaitlistEntry[]> {
 }
 
 export default function WaitlistPage() {
-  const { user, signOut } = useAuth();
   const router = useRouter();
   const [entries, setEntries] = useState<WaitlistEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
+  // Handle client-side rendering
   useEffect(() => {
-    // If user is not authenticated, redirect to login
-    if (user === null) {
-      router.push('/admin/login');
-    }
-  }, [user, router]);
+    setIsClient(true);
+  }, []);
 
+  // Load waitlist data
   useEffect(() => {
+    if (!isClient) return;
+    
     async function loadWaitlist() {
-      if (user) {
-        try {
-          setLoading(true);
-          const data = await fetchWaitlist();
-          setEntries(data);
-        } catch (err) {
-          setError('Failed to load waitlist data');
-          console.error(err);
-        } finally {
-          setLoading(false);
-        }
+      try {
+        setLoading(true);
+        const data = await fetchWaitlist();
+        setEntries(data);
+      } catch (err) {
+        setError('Failed to load waitlist data');
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     }
 
     loadWaitlist();
-  }, [user]);
+  }, [isClient]);
 
   // Show loading state while checking authentication
-  if (user === undefined || loading) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-lg">Loading...</p>
+        <p className="text-lg">Loading waitlist data...</p>
       </div>
     );
   }
@@ -80,7 +79,7 @@ export default function WaitlistPage() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <PearLogo className="h-8 w-8" />
+            <PearLogo size={40} />
             <h1 className="text-2xl font-bold text-gray-900">Waitlist Management</h1>
           </div>
           <div className="flex items-center space-x-4">
@@ -90,12 +89,13 @@ export default function WaitlistPage() {
             >
               Back to Dashboard
             </Link>
-            <button 
-              onClick={() => signOut()}
-              className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
-            >
-              Sign Out
-            </button>
+            <Link href="/">
+              <button 
+                className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
+              >
+                Back to Site
+              </button>
+            </Link>
           </div>
         </div>
       </header>

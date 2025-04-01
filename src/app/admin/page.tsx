@@ -28,47 +28,47 @@ async function fetchWaitlistData() {
 }
 
 export default function AdminDashboard() {
-  const { user, signOut } = useAuth();
   const router = useRouter();
   const [waitlistCount, setWaitlistCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isClient, setIsClient] = useState(false);
+  const auth = useAuth();
+
+  // Avoid hydration mismatch by only using auth after mount
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
-    // If user is not authenticated, redirect to login
-    if (user === null) {
-      router.push('/admin/login');
-    }
-  }, [user, router]);
+    // Only run on client-side
+    if (!isClient) return;
 
-  useEffect(() => {
     async function loadStats() {
-      if (user) {
-        try {
-          setLoading(true);
-          const data = await fetchWaitlistData();
-          if (data.success) {
-            setWaitlistCount(data.count);
-          } else {
-            setError('Failed to load waitlist data');
-          }
-        } catch (err) {
-          setError('An error occurred while loading data');
-          console.error(err);
-        } finally {
-          setLoading(false);
+      try {
+        setLoading(true);
+        const data = await fetchWaitlistData();
+        if (data.success) {
+          setWaitlistCount(data.count);
+        } else {
+          setError('Failed to load waitlist data');
         }
+      } catch (err) {
+        setError('An error occurred while loading data');
+        console.error(err);
+      } finally {
+        setLoading(false);
       }
     }
 
     loadStats();
-  }, [user]);
+  }, [isClient]);
 
-  // Show loading state while checking authentication
-  if (user === undefined || loading) {
+  // Demo mode - skip authentication for now
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p className="text-lg">Loading...</p>
+        <p className="text-lg">Loading dashboard...</p>
       </div>
     );
   }
@@ -79,17 +79,18 @@ export default function AdminDashboard() {
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-4">
-            <PearLogo className="h-8 w-8" />
+            <PearLogo size={40} />
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
           </div>
           <div className="flex items-center space-x-4">
-            <p className="text-sm text-gray-600">{user?.email}</p>
-            <button 
-              onClick={() => signOut()}
-              className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
-            >
-              Sign Out
-            </button>
+            <p className="text-sm text-gray-600">Demo Mode</p>
+            <Link href="/">
+              <button 
+                className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
+              >
+                Back to Site
+              </button>
+            </Link>
           </div>
         </div>
       </header>

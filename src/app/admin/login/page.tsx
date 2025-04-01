@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import PearLogo from '@/components/PearLogo';
 
 export default function AdminLogin() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // For demo purposes, redirect immediately to admin panel
+  const handleAdminAccess = () => {
+    setLoading(true);
+    // Direct access without Firebase auth for demo
     router.push('/admin');
-  }, [router]);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -24,14 +26,15 @@ export default function AdminLogin() {
         
         <div className="mb-8">
           <p className="text-center text-gray-600 mb-4">
-            Redirecting to admin panel for demo purposes...
+            Demo Admin Access
           </p>
           
           <button
             className="w-full bg-[#4CBFB6] hover:bg-[#3da99f] text-white py-3 px-4 rounded-md transition-colors flex items-center justify-center gap-2"
-            onClick={() => router.push('/admin')}
+            onClick={handleAdminAccess}
+            disabled={loading}
           >
-            Go to Admin Dashboard
+            {loading ? 'Loading...' : 'Access Admin Dashboard'}
           </button>
         </div>
         
