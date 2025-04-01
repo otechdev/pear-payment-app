@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Pear - The Future of Payment",
   description: "Fast, easy, and convenient payments with QR codes. No more fumbling with cash or waiting in line.",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
   icons: {
     icon: [
       {

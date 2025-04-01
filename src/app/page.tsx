@@ -3,8 +3,11 @@ import Link from "next/link";
 import PhoneMockup from "@/components/PhoneMockup";
 import PearLogo from "@/components/PearLogo";
 import WaitlistForm from "@/components/WaitlistForm";
+import { useState } from "react";
 
 export default function Home() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
     <main className="flex min-h-screen flex-col items-center">
       {/* Navbar */}
@@ -21,7 +24,10 @@ export default function Home() {
               <Link href="#testimonials" className="text-gray-600 hover:text-[#4CBFB6] transition-colors">Testimonials</Link>
               <Link href="#download" className="bg-[#4CBFB6] hover:bg-[#3da99f] text-white px-4 py-2 rounded-md transition-colors">Download</Link>
             </nav>
-            <button className="md:hidden text-gray-600">
+            <button 
+              className="md:hidden text-gray-600"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="3" y1="12" x2="21" y2="12"></line>
                 <line x1="3" y1="6" x2="21" y2="6"></line>
@@ -29,40 +35,81 @@ export default function Home() {
               </svg>
             </button>
           </div>
+          
+          {/* Mobile menu */}
+          {mobileMenuOpen && (
+            <div className="md:hidden py-4 bg-white">
+              <div className="flex flex-col space-y-4">
+                <Link 
+                  href="#features" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-gray-600 hover:text-[#4CBFB6] transition-colors px-2 py-2"
+                >
+                  Features
+                </Link>
+                <Link 
+                  href="#how-it-works" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-gray-600 hover:text-[#4CBFB6] transition-colors px-2 py-2"
+                >
+                  How it works
+                </Link>
+                <Link 
+                  href="#testimonials" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-gray-600 hover:text-[#4CBFB6] transition-colors px-2 py-2"
+                >
+                  Testimonials
+                </Link>
+                <Link 
+                  href="#download" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="bg-[#4CBFB6] hover:bg-[#3da99f] text-white px-4 py-2 rounded-md transition-colors inline-block w-fit"
+                >
+                  Download
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="w-full bg-[#4CBFB6] text-white py-20">
+      <section className="w-full bg-[#4CBFB6] text-white py-12 md:py-20">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="md:w-1/2 space-y-6">
-              <div className="flex items-center gap-3 mb-4">
-                <PearLogo size={60} primaryColor="#ffffff" secondaryColor="#9AE3DC" />
+            <div className="md:w-1/2 space-y-4 md:space-y-6">
+              <div className="flex items-center gap-3 mb-2 md:mb-4">
+                <div className="hidden md:block">
+                  <PearLogo size={60} primaryColor="#ffffff" secondaryColor="#9AE3DC" />
+                </div>
+                <div className="md:hidden">
+                  <PearLogo size={40} primaryColor="#ffffff" secondaryColor="#9AE3DC" />
+                </div>
               </div>
-              <h1 className="text-5xl font-bold leading-tight">
+              <h1 className="text-3xl md:text-5xl font-bold leading-tight">
                 The future of payment!<br />With Pear
               </h1>
-              <p className="text-xl">
+              <p className="text-lg md:text-xl">
                 No more fumbling with cash or waiting in line - Pear makes payments fast, 
                 easy, and convenient.
               </p>
-              <div className="pt-4 flex flex-col sm:flex-row gap-3">
+              <div className="pt-2 md:pt-4 flex flex-col sm:flex-row gap-3">
                 <Link 
                   href="#download" 
-                  className="bg-orange-400 hover:bg-orange-500 text-white px-6 py-3 rounded-md font-medium text-lg transition-colors duration-300 text-center"
+                  className="bg-orange-400 hover:bg-orange-500 text-white px-4 md:px-6 py-2 md:py-3 rounded-md font-medium text-base md:text-lg transition-colors duration-300 text-center"
                 >
                   Get Started
                 </Link>
                 <Link 
                   href="#features" 
-                  className="bg-transparent border-2 border-white hover:bg-white/10 text-white px-6 py-3 rounded-md font-medium text-lg transition-colors duration-300 text-center"
+                  className="bg-transparent border-2 border-white hover:bg-white/10 text-white px-4 md:px-6 py-2 md:py-3 rounded-md font-medium text-base md:text-lg transition-colors duration-300 text-center"
                 >
                   Learn More
                 </Link>
               </div>
               
-              <div className="pt-6">
+              <div className="pt-4 md:pt-6">
                 <WaitlistForm 
                   className="bg-white/10 backdrop-blur-sm p-4 rounded-lg"
                   buttonText="Get Early Access" 
@@ -71,7 +118,7 @@ export default function Home() {
                 />
               </div>
             </div>
-            <div className="md:w-1/2 relative mt-10 md:mt-0 flex justify-center">
+            <div className="md:w-1/2 relative mt-8 md:mt-0 flex justify-center">
               <PhoneMockup>
                 <div className="h-full w-full flex flex-col bg-[#4CBFB6]">
                   {/* App Header */}
@@ -201,11 +248,11 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 w-full">
+      <section id="features" className="py-12 md:py-20 w-full">
         <div className="container mx-auto px-6 max-w-6xl">
-          <h2 className="text-4xl font-bold text-center mb-16">Faster payments mean happier customers</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 md:mb-16">Faster payments mean happier customers</h2>
           
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
             <div className="bg-white p-8 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-100">
               <div className="w-16 h-16 bg-[#4CBFB6] flex items-center justify-center rounded-full mb-6">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white">

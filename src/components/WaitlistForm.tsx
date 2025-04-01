@@ -67,19 +67,19 @@ export default function WaitlistForm({
   return (
     <div className={className}>
       {!success ? (
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 w-full">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={placeholderText}
             disabled={isSubmitting}
-            className="px-4 py-3 rounded-md flex-1 text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4CBFB6] focus:border-transparent"
+            className="px-4 py-3 rounded-md flex-1 text-gray-800 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4CBFB6] focus:border-transparent w-full"
           />
           <button
             type="submit"
             disabled={isSubmitting}
-            className="bg-orange-400 hover:bg-orange-500 text-white px-6 py-3 rounded-md font-medium transition-colors duration-300 disabled:opacity-50"
+            className="bg-orange-400 hover:bg-orange-500 text-white px-4 sm:px-6 py-3 rounded-md font-medium transition-colors duration-300 disabled:opacity-50 w-full sm:w-auto mt-2 sm:mt-0"
           >
             {isSubmitting ? 'Submitting...' : buttonText}
           </button>

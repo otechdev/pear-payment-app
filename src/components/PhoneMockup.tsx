@@ -9,7 +9,7 @@ interface PhoneMockupProps {
 
 export default function PhoneMockup({ children, imageSrc, imageAlt = "Phone screen" }: PhoneMockupProps) {
   return (
-    <div className="relative w-[300px] h-[600px] rounded-[40px] overflow-hidden border-[14px] border-black bg-white shadow-xl mx-auto">
+    <div className="relative w-[250px] sm:w-[280px] md:w-[300px] h-[500px] sm:h-[550px] md:h-[600px] rounded-[40px] overflow-hidden border-[14px] border-black bg-white shadow-xl mx-auto">
       {/* Status bar */}
       <div className="h-7 w-full bg-black relative">
         <div className="absolute top-1 left-0 right-0 mx-auto w-20 h-4 bg-black rounded-b-xl"></div>
