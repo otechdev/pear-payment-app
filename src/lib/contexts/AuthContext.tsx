@@ -21,30 +21,49 @@ const AuthContext = createContext<AuthContextType>({
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const auth: Auth | null = typeof window !== 'undefined' ? (firebaseAuth as Auth) : null;
+  const [isClient, setIsClient] = useState(false);
+  
+  // Make sure we only access auth on client side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Safe reference to auth that's only used client-side
+  const auth = isClient ? (firebaseAuth as Auth) : null;
 
   useEffect(() => {
     // Only run on client side and when auth is initialized
-    if (typeof window !== 'undefined' && auth) {
-      const unsubscribe = auth.onAuthStateChanged((authUser: User | null) => {
-        setUser(authUser);
-        setLoading(false);
-      }, (error: Error) => {
-        console.error("Auth state change error:", error);
-        setLoading(false);
-      });
+    if (!isClient) {
+      setLoading(false);
+      return;
+    }
+    
+    try {
+      if (auth) {
+        const unsubscribe = auth.onAuthStateChanged((authUser: User | null) => {
+          setUser(authUser);
+          setLoading(false);
+        }, (error: Error) => {
+          console.error("Auth state change error:", error);
+          setLoading(false);
+        });
 
-      return () => unsubscribe();
-    } else {
-      // If we're server-side or auth isn't initialized, just set loading to false
+        return () => unsubscribe();
+      } else {
+        // If auth isn't initialized, just set loading to false
+        console.warn("Firebase auth not initialized");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error setting up auth state listener:", error);
       setLoading(false);
     }
-  }, [auth]);
+  }, [auth, isClient]);
 
   const signInWithGoogle = async () => {
     if (!auth) {
       console.error("Auth is not initialized");
-      return;
+      throw new Error("Authentication service is not available");
     }
 
     const provider = new GoogleAuthProvider();
@@ -52,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await signInWithPopup(auth, provider);
     } catch (error) {
       console.error("Error signing in with Google", error);
+      throw error;
     }
   };
 

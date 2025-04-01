@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import PearLogo from '@/components/PearLogo';
 import { useAuth } from '@/lib/hooks/useAuth';
-import SignInWithGoogle from '@/components/SignInWithGoogle';
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -40,7 +39,7 @@ export default function AdminLogin() {
   };
 
   // Show loading state if still checking auth
-  if (loading || !isClient) {
+  if (!isClient) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-lg">Loading...</p>
@@ -49,7 +48,7 @@ export default function AdminLogin() {
   }
 
   // If user is already logged in, show redirect message
-  if (user) {
+  if (isClient && user) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <p className="text-lg">Redirecting to admin dashboard...</p>

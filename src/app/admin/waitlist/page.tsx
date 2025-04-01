@@ -74,10 +74,19 @@ export default function WaitlistPage() {
   }, [isClient, authLoading, user]);
 
   // Show loading state
-  if (authLoading || loading || !isClient || !user) {
+  if (authLoading || loading || !isClient) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-lg">Loading waitlist data...</p>
+      </div>
+    );
+  }
+
+  // Check if user is authenticated
+  if (!user) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-lg">Redirecting to login...</p>
       </div>
     );
   }
