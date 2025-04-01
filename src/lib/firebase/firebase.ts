@@ -1,7 +1,7 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
+import { getFirestore, Firestore } from "firebase/firestore";
+import { getStorage, FirebaseStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 // For better error handling, provide the actual values or defaults
@@ -27,10 +27,10 @@ if (typeof window !== 'undefined') {
 }
 
 // Initialize Firebase only on client side
-let app;
+let app: FirebaseApp | undefined;
 let auth: Auth | null = null;
-let db;
-let storage;
+let db: Firestore | null = null;
+let storage: FirebaseStorage | null = null;
 
 // Only initialize Firebase if we're in the browser and have necessary config
 if (typeof window !== 'undefined' && firebaseConfig.apiKey) {
