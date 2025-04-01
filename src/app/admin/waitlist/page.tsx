@@ -39,15 +39,23 @@ export default function WaitlistPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
+  const { user, loading: authLoading, signOut } = useAuth();
 
-  // Handle client-side rendering
+  // Ensure we're on client side before checking auth
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  // Load waitlist data
+  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!isClient) return;
+    if (isClient && !authLoading && !user) {
+      router.push('/admin/login');
+    }
+  }, [user, authLoading, router, isClient]);
+
+  // Load waitlist data when authenticated
+  useEffect(() => {
+    if (!isClient || authLoading || !user) return;
     
     async function loadWaitlist() {
       try {
@@ -63,10 +71,10 @@ export default function WaitlistPage() {
     }
 
     loadWaitlist();
-  }, [isClient]);
+  }, [isClient, authLoading, user]);
 
-  // Show loading state while checking authentication
-  if (loading) {
+  // Show loading state
+  if (authLoading || loading || !isClient || !user) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-lg">Loading waitlist data...</p>
@@ -89,13 +97,12 @@ export default function WaitlistPage() {
             >
               Back to Dashboard
             </Link>
-            <Link href="/">
-              <button 
-                className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
-              >
-                Back to Site
-              </button>
-            </Link>
+            <button 
+              onClick={() => signOut()}
+              className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </header>

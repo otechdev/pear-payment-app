@@ -33,16 +33,23 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isClient, setIsClient] = useState(false);
-  const auth = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
 
-  // Avoid hydration mismatch by only using auth after mount
+  // Ensure we're on client side before checking auth
   useEffect(() => {
     setIsClient(true);
   }, []);
 
+  // Redirect to login if not authenticated
   useEffect(() => {
-    // Only run on client-side
-    if (!isClient) return;
+    if (isClient && !authLoading && !user) {
+      router.push('/admin/login');
+    }
+  }, [user, authLoading, router, isClient]);
+
+  // Fetch data when authenticated
+  useEffect(() => {
+    if (!isClient || authLoading || !user) return;
 
     async function loadStats() {
       try {
@@ -62,10 +69,10 @@ export default function AdminDashboard() {
     }
 
     loadStats();
-  }, [isClient]);
+  }, [isClient, authLoading, user]);
 
-  // Demo mode - skip authentication for now
-  if (loading) {
+  // Show loading state
+  if (authLoading || loading || !isClient || !user) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p className="text-lg">Loading dashboard...</p>
@@ -83,14 +90,13 @@ export default function AdminDashboard() {
             <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
           </div>
           <div className="flex items-center space-x-4">
-            <p className="text-sm text-gray-600">Demo Mode</p>
-            <Link href="/">
-              <button 
-                className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
-              >
-                Back to Site
-              </button>
-            </Link>
+            <p className="text-sm text-gray-600">{user.email}</p>
+            <button 
+              onClick={() => signOut()}
+              className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded-md"
+            >
+              Sign Out
+            </button>
           </div>
         </div>
       </header>

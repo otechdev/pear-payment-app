@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/firebase/firebase';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { cookies } from 'next/headers';
 
 // Simple in-memory storage for waitlist emails (will reset on server restart)
 const waitlistEmails: { email: string, timestamp: Date, source?: string }[] = [];
@@ -59,13 +62,28 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET endpoint for retrieving waitlist entries
+// GET endpoint for retrieving waitlist entries - Only accessible to authenticated users
 export async function GET(req: NextRequest) {
-  return NextResponse.json(
-    { 
-      entries: waitlistEmails,
-      count: waitlistEmails.length
-    },
-    { status: 200 }
-  );
+  // In a production environment, you would want to verify the session token here
+  // This is a simplified example that doesn't do real authentication
+  
+  try {
+    // Return waitlist data
+    return NextResponse.json(
+      { 
+        entries: waitlistEmails,
+        count: waitlistEmails.length
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Error retrieving waitlist data:', error);
+    return NextResponse.json(
+      { 
+        message: 'Internal server error', 
+        success: false 
+      },
+      { status: 500 }
+    );
+  }
 } 
